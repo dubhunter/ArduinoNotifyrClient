@@ -1,5 +1,5 @@
 #include <SPI.h>
-#include <WiFly.h>
+#include <Ethernet.h>
 #include <NotifyrClient.h>
 #include "Credentials.h"
 
