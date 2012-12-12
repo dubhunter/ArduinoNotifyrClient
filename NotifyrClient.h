@@ -38,6 +38,7 @@
 class NotifyrClient {
 
 	public:
+		static const int HEARTBEAT_THRESHHOLD = 60000; //heartbeat is 30 seconds, if we miss a second beat, reconnect
 	#ifdef _WIFLY_
 		NotifyrClient();
 	#endif
@@ -54,6 +55,7 @@ class NotifyrClient {
 		String _channel;
 		String _buffer;
 		char _lastChar;
+		int _lastHeartbeat;
 		bool _receiving;
 	#ifdef _WIFLY_
 		WiFlyClient _client;

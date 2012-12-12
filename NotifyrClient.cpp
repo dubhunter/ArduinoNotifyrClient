@@ -28,6 +28,7 @@
 #include <stdlib.h>
 
 typedef void (*EventDelegate)(String data);
+const int NotifyrClient::HEARTBEAT_THRESHHOLD;
 
 #ifdef _WIFLY_
 NotifyrClient::NotifyrClient() : _client("api.notifyr.io", 80) {}
@@ -80,19 +81,13 @@ void NotifyrClient::bind(EventDelegate delegate) {
 }
 
 void NotifyrClient::listen() {
-	// TODO: Figure out how to handle reconnect
-	// Check for "update interval", reconnect if interval exceeded
-	// if (!connected()) {
-	// 	_connect();
-	// }
-	
 	if (_client.available()) {
 		char c = _client.read();
 		
-		if (c != _lastChar || c != ' ') {
+		if (c != _lastChar || c != ' ') { //ignore double spaces
 			// Serial.print(c);
 			
-			if (_receiving && _lastChar == '\n' && c == '\n') {
+			if (_receiving && _lastChar == '\n' && c == '\n') { //detect double newline
 				//remove newline and quote
 				_buffer = _buffer.substring(0, _buffer.length() - 2);
 				
@@ -112,6 +107,13 @@ void NotifyrClient::listen() {
 				// Serial.println("\nReceiving Event...");
 				_buffer = "";
 				_receiving = true;
+			} else if (_buffer.endsWith("data: null")) { //check for heartbeat
+				//if it has been longer than the threshhold since our last heartbeat, reconnect
+				if (millis() - _lastHeartbeat > HEARTBEAT_THRESHHOLD) {
+					_connect();
+				}
+				_lastHeartbeat = millis();
+				_buffer = "";
 			}
 		}
 		_lastChar = c;

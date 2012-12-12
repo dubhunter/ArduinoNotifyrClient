@@ -28,7 +28,6 @@ void setup() {
     
     if (notifyr.connect(NOTIFYR_KEY, "my-channel")) {
         Serial.println("Connected!");
-        
         notifyr.bind(handleEvent);
     } else {
         Serial.println("Connection failed...");
