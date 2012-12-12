@@ -1,9 +1,9 @@
 #include <SPI.h>
 #include <WiFly.h>
-#include <WiFlyNotifyrClient.h>
+#include <NotifyrClient.h>
 #include "Credentials.h"
 
-WiFlyNotifyrClient notifyr;
+NotifyrClient notifyr;
 
 void setup() {
     Serial.begin(9600);

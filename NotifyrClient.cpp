@@ -1,5 +1,5 @@
 /*
- WiFlyNotifyrClient, a Notifyr.io client for Arduino & WiFly
+ NotifyrClient, a Notifyr.io client for Arduino & WiFly
  Copyright 2012 Will Mason
  http://willmason.me
  
@@ -22,48 +22,66 @@
  THE SOFTWARE.
  */
 
-#include <WiFlyNotifyrClient.h>
+#include <NotifyrClient.h>
 #include <WString.h>
 #include <string.h>
 #include <stdlib.h>
 
 typedef void (*EventDelegate)(String data);
 
-WiFlyNotifyrClient::WiFlyNotifyrClient() : _client("api.notifyr.io", 80) {}
+#ifdef _WIFLY_
+NotifyrClient::NotifyrClient() : _client("api.notifyr.io", 80) {}
 
-bool WiFlyNotifyrClient::_connect() {
+bool NotifyrClient::_connect() {
 	if (_client.connect()) {
-		_client.println("GET /subscribe/" + _channel + "?key=" + _key + "&always_ok.1");
-		_client.println("Connection: keep-alive");
-		_client.println("Host: api.notifyr.io");
-		_client.println();
+		_request();
 		return true;
 	} else {
 		return false;
 	}
 }
+#endif
 
-bool WiFlyNotifyrClient::connect(String key, String channel) {
+#ifndef _WIFLY_
+bool NotifyrClient::_connect() {
+	if (_client.connect("api.notifyr.io", 80)) {
+		_request();
+		return true;
+	} else {
+		return false;
+	}
+}
+#endif
+
+void NotifyrClient::_request() {
+	_client.println("GET /subscribe/" + _channel + "?key=" + _key + "&always_ok.1");
+	_client.println("Connection: keep-alive");
+	_client.println("Host: api.notifyr.io");
+	_client.println();
+}
+
+bool NotifyrClient::connect(String key, String channel) {
 	_key = key;
 	_channel = channel;
 	
 	_connect();
 }
 
-bool WiFlyNotifyrClient::connected() {
+bool NotifyrClient::connected() {
 	return _client.connected();
 }
 
-void WiFlyNotifyrClient::disconnect() {
+void NotifyrClient::disconnect() {
 	_client.stop();
 }
 
-void WiFlyNotifyrClient::bind(EventDelegate delegate) {
+void NotifyrClient::bind(EventDelegate delegate) {
 	_eventDelegate = delegate;
 }
 
-void WiFlyNotifyrClient::listen() {
+void NotifyrClient::listen() {
 	// TODO: Figure out how to handle reconnect
+	// Check for "update interval", reconnect if interval exceeded
 	// if (!connected()) {
 	// 	_connect();
 	// }

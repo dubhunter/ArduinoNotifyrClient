@@ -1,5 +1,5 @@
 /*
- WiFlyNotifyrClient, a Notifyr.io client for Arduino & WiFly
+ NotifyrClient, a Notifyr.io client for Arduino & WiFly
  Copyright 2012 Will Mason
  http://willmason.me
  
@@ -22,19 +22,25 @@
  THE SOFTWARE.
  */
 
-#ifndef WIFLYNOTIFYRCLIENT_H
-#define WIFLYNOTIFYRCLIENT_H_
+#ifndef NOTIFYRCLIENT_H
+#define NOTIFYRCLIENT_H
 
 #include <string.h>
 #include <stdlib.h>
 #include <WString.h>
 #include "Arduino.h"
+#include <Ethernet.h>
 #include <WiFly.h>
 
-class WiFlyNotifyrClient {
+// Uncomment to enable WiFlyClient
+// #define _WIFLY_
+
+class NotifyrClient {
 
 	public:
-		WiFlyNotifyrClient();
+	#ifdef _WIFLY_
+		NotifyrClient();
+	#endif
 		typedef void (*EventDelegate)(String data);
 		bool connect(String key, String channel);
 		bool connected();
@@ -43,12 +49,18 @@ class WiFlyNotifyrClient {
 		void listen();
 	private:
 		bool _connect();
+		void _request();
 		String _key;
 		String _channel;
 		String _buffer;
 		char _lastChar;
 		bool _receiving;
+	#ifdef _WIFLY_
 		WiFlyClient _client;
+	#endif
+	#ifndef _WIFLY_
+		EthernetClient _client;
+	#endif
 		EventDelegate _eventDelegate;
 };
 
