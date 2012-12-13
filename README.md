@@ -95,9 +95,11 @@ Turn on logging (`Serial.begin()` required);
 
 #Caveats
 
+ * I do not know C++
  * Does NOT handle multi-line payloads.
  * If your payload includes `data: "`, everything will break. You can use `"data": "` for more complex payloads.
  * If you hold the main `loop()` for more than 60 seconds, you may cause the heartbeats to be missed, and cause a reconnect attempt.
+   * If this is a problem, change `NotifyrClient::HEARTBEAT_THRESHHOLD` to something higher in `NotifyrClient.h`
 
 #Credits
 
