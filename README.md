@@ -58,7 +58,7 @@ They both do the same thing: Connect to `my-channel` channel and print all event
 ###Debug (or just see cool info)
 
     begin() {
-        Serial.being(9600);
+        Serial.begin(9600);
         NotifyrClient::debug();
         
         //connect & bind...
