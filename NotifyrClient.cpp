@@ -28,7 +28,8 @@
 #include <stdlib.h>
 
 typedef void (*EventDelegate)(String data);
-const int NotifyrClient::HEARTBEAT_THRESHHOLD;
+const unsigned long NotifyrClient::HEARTBEAT_THRESHHOLD;
+bool NotifyrClient::_debug = false;
 
 #ifdef _WIFLY_
 NotifyrClient::NotifyrClient() : _client("api.notifyr.io", 80) {}
@@ -55,6 +56,7 @@ bool NotifyrClient::_connect() {
 #endif
 
 void NotifyrClient::_request() {
+	NotifyrClient::_log("Sending request...");
 	_client.println("GET /subscribe/" + _channel + "?key=" + _key + "&always_ok.1");
 	_client.println("Connection: keep-alive");
 	_client.println("Host: api.notifyr.io");
@@ -64,7 +66,6 @@ void NotifyrClient::_request() {
 bool NotifyrClient::connect(String key, String channel) {
 	_key = key;
 	_channel = channel;
-	
 	_connect();
 }
 
@@ -91,6 +92,8 @@ void NotifyrClient::listen() {
 				//remove newline and quote
 				_buffer = _buffer.substring(0, _buffer.length() - 2);
 				
+				NotifyrClient::_log("Data: " + _buffer);
+				
 				//do thing
 				if (_eventDelegate != NULL) {
 					_eventDelegate(_buffer);
@@ -104,18 +107,34 @@ void NotifyrClient::listen() {
 			_buffer += c;
 			
 			if (_buffer.endsWith("data: \"")) {
-				// Serial.println("\nReceiving Event...");
+				NotifyrClient::_log("Receiving Event...");
 				_buffer = "";
 				_receiving = true;
 			} else if (_buffer.endsWith("data: null")) { //check for heartbeat
-				//if it has been longer than the threshhold since our last heartbeat, reconnect
-				if (millis() - _lastHeartbeat > HEARTBEAT_THRESHHOLD) {
-					_connect();
-				}
-				_lastHeartbeat = millis();
+				NotifyrClient::_log("Heartbeat...");
 				_buffer = "";
+				_lastHeartbeat = millis();
 			}
 		}
 		_lastChar = c;
 	}
+	
+	//if it has been longer than the threshhold since our last heartbeat, reconnect
+	if (_lastHeartbeat && (millis() - _lastHeartbeat) > HEARTBEAT_THRESHHOLD) {
+		NotifyrClient::_log("Missed heardtbeat!");
+		NotifyrClient::_log("Disconnecting...");
+		disconnect();
+		NotifyrClient::_log("Connecting...");
+		_connect();
+	}
+}
+
+void NotifyrClient::_log(String message) {
+	if (_debug) {
+		Serial.println(message);
+	}
+}
+
+void NotifyrClient::debug() {
+	_debug = true;
 }

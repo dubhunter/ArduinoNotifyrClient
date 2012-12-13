@@ -38,7 +38,7 @@
 class NotifyrClient {
 
 	public:
-		static const int HEARTBEAT_THRESHHOLD = 60000; //heartbeat is 30 seconds, if we miss a second beat, reconnect
+		static const unsigned long HEARTBEAT_THRESHHOLD = 60000; //heartbeat is 30 seconds, if we miss a second beat, reconnect
 	#ifdef _WIFLY_
 		NotifyrClient();
 	#endif
@@ -48,15 +48,18 @@ class NotifyrClient {
 		void disconnect();
 		void bind(EventDelegate delegate);
 		void listen();
+		static void debug();
 	private:
 		bool _connect();
 		void _request();
+		static void _log(String message);
 		String _key;
 		String _channel;
 		String _buffer;
-		char _lastChar;
-		int _lastHeartbeat;
 		bool _receiving;
+		char _lastChar;
+		unsigned long _lastHeartbeat;
+		static bool _debug;
 	#ifdef _WIFLY_
 		WiFlyClient _client;
 	#endif

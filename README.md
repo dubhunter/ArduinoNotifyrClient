@@ -55,6 +55,15 @@ They both do the same thing: Connect to `my-channel` channel and print all event
         Serial.println(data);
     }
 
+###Debug (or just see cool info)
+
+    begin() {
+        Serial.being(9600);
+        NotifyrClient::debug();
+        
+        //connect & bind...
+    }
+
 #API
 
 The `NotifyrClient` exposes a very simple API.
@@ -79,6 +88,10 @@ Once you have connected, bind your event delegate to be called when an event is 
 ###void NotifyrClient::listen();
 
 Listen for incoming events. This MUST be placed in your `loop()` function.
+
+###NotifyrClient::debug();
+
+Turn on logging (`Serial.begin()` required);
 
 #Caveats
 
