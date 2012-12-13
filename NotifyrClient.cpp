@@ -66,7 +66,7 @@ void NotifyrClient::_request() {
 bool NotifyrClient::connect(String key, String channel) {
 	_key = key;
 	_channel = channel;
-	_connect();
+	return _connect();
 }
 
 bool NotifyrClient::connected() {
@@ -121,11 +121,18 @@ void NotifyrClient::listen() {
 	
 	//if it has been longer than the threshhold since our last heartbeat, reconnect
 	if (_lastHeartbeat && (millis() - _lastHeartbeat) > HEARTBEAT_THRESHHOLD) {
-		NotifyrClient::_log("Missed heardtbeat!");
+		NotifyrClient::_log("Missed heartbeat!");
 		NotifyrClient::_log("Disconnecting...");
 		disconnect();
 		NotifyrClient::_log("Connecting...");
-		_connect();
+		if (_connect()) {
+			NotifyrClient::_log("Reconnected!");
+			_buffer = "";
+			_lastHeartbeat = millis();
+		} else {
+			NotifyrClient::_log("Connection failed! Sleeping 3 seconds...");
+			delay(3000);
+		}
 	}
 }
 
