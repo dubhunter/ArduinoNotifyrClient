@@ -6,8 +6,10 @@ Notifyr is a simple cloud based service to quickly and easily add realtime push 
 
 #Installation
 
- * Clone (or Fork & Clone) ArduinoNotifyrClient (example `git clone git://github.com/dubhunter/ArduinoNotifyrClient.git`)
- * Copy (or Symlink) `ArduinoNotifyrClient` to `Arduino/libraries` (example `ln -s ~/Projects/ArduinoNotifyrClient ~/Documents/Arduino/libraries/ArduinoNotifyrClient`)
+ * Clone (or Fork & Clone) ArduinoNotifyrClient
+   * example: `git clone git://github.com/dubhunter/ArduinoNotifyrClient.git`
+ * Copy (or Symlink) `ArduinoNotifyrClient` to `Arduino/libraries`
+   * example: `ln -s ~/Projects/ArduinoNotifyrClient ~/Documents/Arduino/libraries/ArduinoNotifyrClient`
  * Restart Arduino IDE
 
 ###Example
