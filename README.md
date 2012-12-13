@@ -25,12 +25,66 @@ Notifyr is a simple cloud based service to quickly and easily add realtime push 
 
 #Examples
 
-###Coming soon!
+Included with this library are two simple examples `NotifyrSerial` and `NotifyrSerialWiFly` for the Ethernet Shield and WiFly Shield respectively.
+They both do the same thing: Connect to `my-channel` channel and print all events to `Serial`.
+
+###Instantiation
+
+    //Create a NotifyrClient (which will have its own Ethernet or WiFly client)
+    NotifyrClient notifyr;
+
+###Connect & Bind
+
+    if (notifyr.connect(NOTIFYR_KEY, "my-channel")) {
+        notifyr.bind(handleEvent);
+    } else {
+        //failed to connect
+    }
+
+###Listen
+
+    void loop() {
+        //listen for incoming events
+        notifyr.listen();
+    }
+
+###EventDelegate
+
+    void handleEvent(String data) {
+        //do something with your data
+        Serial.println(data);
+    }
+
+#API
+
+The `NotifyrClient` exposes a very simple API.
+
+###bool NotifyrClient::connect(String key, String channel);
+
+Connect to Notifyr on a specific channel. Automatic re-connects are attempted if we miss two heartbeats.
+
+###bool NotifyrClient::connected();
+
+Check to see if you are currently connected to Notifyr.
+
+###void NotifyrClient::disconnect();
+
+Disconnect from Notifyr.
+
+###void NotifyrClient::bind(EventDelegate delegate);
+
+Once you have connected, bind your event delegate to be called when an event is received.
+`EventDelegate`'s have the signature `void myDelegate(String data);`
+
+###void NotifyrClient::listen();
+
+Listen for incoming events. This MUST be placed in your `loop()` function.
 
 #Caveats
 
- * Does NOT handle multi-line payloads
- * If your payload includes `data: "`, everything will break. You can use `"data": "`
+ * Does NOT handle multi-line payloads.
+ * If your payload includes `data: "`, everything will break. You can use `"data": "` for more complex payloads.
+ * If you hold the main `loop()` for more than 60 seconds, you may cause the heartbeats to be missed, and cause a reconnect attempt.
 
 #Credits
 

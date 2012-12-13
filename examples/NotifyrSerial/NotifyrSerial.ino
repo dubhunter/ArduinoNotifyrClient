@@ -3,24 +3,14 @@
 #include <NotifyrClient.h>
 #include "Credentials.h"
 
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xF0, 0x0D };
 NotifyrClient notifyr;
 
 void setup() {
     Serial.begin(9600);
     
-    Serial.println("Initializing WiFi...");
-    WiFly.begin();
-    
-    Serial.print("Attempting to join: ");
-    Serial.println(SSID);
-    
-    if (!WiFly.join(SSID, PASSPHRASE, true)) {
-        Serial.println("Association failed...");
-        for (;;) ; // do nothing forever
-    }
-    
-    Serial.println("Joined!");
-    Serial.println();
+    Serial.println("Initializing Ethernet...");
+    Ethernet.begin(mac);
     
     Serial.print("Connecting to Notifyr (");
     Serial.print(NOTIFYR_KEY);
