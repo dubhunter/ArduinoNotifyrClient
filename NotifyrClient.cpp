@@ -110,6 +110,7 @@ void NotifyrClient::listen() {
 				NotifyrClient::_log("Receiving Event...");
 				_buffer = "";
 				_receiving = true;
+				_lastHeartbeat = millis();
 			} else if (_buffer.endsWith("data: null")) { //check for heartbeat
 				NotifyrClient::_log("Heartbeat...");
 				_buffer = "";
